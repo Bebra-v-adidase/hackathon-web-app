@@ -1,33 +1,29 @@
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import { Icon, Link, Message, Messagebar, Messages, MessagesTitle, Navbar, Page } from 'konsta/react'
 import { MdSend } from 'react-icons/md'
 
+import MsgType from '../objects/MsgType'
+
 const Messenger = () => {
   const [messageText, setMessageText] = useState('')
-  const [messagesData, setMessagesData] = useState([
-    {
-      type: 'sent',
-      text: 'здарова урод',
-    },
-    {
-      name: 'Канеки Кен',
-      type: 'received',
-      text: 'здарова иди нахуй',
-      avatar: 'https://i.pinimg.com/originals/f4/72/17/f4721731bd55554df29671aa790f0b01.jpg',
-    }
+  const [messagesData, setMessagesData] = useState<MsgType[]>([
+    new MsgType({
+      name: 'Центр-инвест',
+      from_id: 1,
+      date: +Date.now(),
+      text: 'Чем мы можем помочь?',
+      avatar: '/logo.jpg',
+    })
   ])
 
   const handleSendClick = () => {
-    const text = messageText.trim()
-    const type = 'sent'
-    const messagesToSend = []
-    if (text.length) {
-      messagesToSend.push({text, type})
-    }
-    if (messagesToSend.length === 0) {
-      return
-    }
-    setMessagesData([...messagesData, ...messagesToSend])
+    messagesData.push(new MsgType({
+      from_id: 0,
+      date: +Date.now(),
+      text: messageText.trim()
+    }))
+
+    setMessagesData(messagesData)
     setMessageText('')
   }
 
@@ -52,18 +48,7 @@ const Messenger = () => {
 
   return (
     <Page>
-      <Navbar
-        title="Центр-инвест Банк"
-        subtitle="Поддержка"
-        titleFontSizeIos="text-[15px]"
-        left={
-          <img
-            alt="avatar"
-            src="https://avatars.mds.yandex.net/get-altay/906486/2a00000162ef63ac29e0c1ef089ca1d2c811/h440"
-            className="w-8 h-8 rounded-full"
-          />
-        }
-      />
+      <Navbar title="Поддержка" />
       <Messages>
         <MessagesTitle style={{marginBottom: '0.625rem'}}>{currentDate}</MessagesTitle>
         {messagesData.map((message, index) => (
