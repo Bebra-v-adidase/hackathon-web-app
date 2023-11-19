@@ -14,8 +14,14 @@ const Messenger = () => {
       from_id: 1,
       date: +Date.now(),
       text: 'Чем мы можем помочь?',
-      avatar: '/logo.png',
+      avatar: '/logo.png'
     })
+  ])
+
+  const [buttons, setButtons] = useState([
+    'Сделать заказ', 'Отследить заказ',
+    'Отменить заказ', 'Возврат средств',
+    'Оставить отзыв', 'Жалоба'
   ])
 
   const ref = useRef<HTMLDivElement>(null)
@@ -43,6 +49,7 @@ const Messenger = () => {
     })])
 
     setMessageText('')
+    setButtons([])
     MessageService.sendMessage(text)
   }
 
@@ -55,7 +62,7 @@ const Messenger = () => {
     day: 'numeric',
     hour12: false,
     hour: '2-digit',
-    minute: '2-digit',
+    minute: '2-digit'
   })
     .formatToParts(new Date())
     .map((part) => {
@@ -67,7 +74,9 @@ const Messenger = () => {
 
   function pushMessages(messages: Array<Message>) {
     const m = [...messagesData, ...messages]
+    const lastMessage = m[m.length - 1]
     setMessagesData(m)
+    setButtons(lastMessage.buttons ? lastMessage.buttons : [])
   }
 
   MessageService.cb = pushMessages
@@ -149,19 +158,18 @@ const Messenger = () => {
       </Messages>
       <div ref={barRef} className="fixed pt-1 bottom-0 start-0 pb-11 w-full bg-white dark:bg-black translucent">
         <div className="max-w-[80%] flex flex-wrap ml-2">
-          {['Сделать заказ', 'Отследить заказ', 'Отменить заказ',
-            'Возврат средств', 'Оставить отзыв', 'Жалоба'].map((text, index) => (
-              <Button
-                key={index}
-                onClick={() => {
-                  handleSendClick(text)
-                }}
-                className="mr-0.75 mb-0.75 w-fit normal-case"
-                small
-                tonal
-              >
-                {text}
-              </Button>
+          {buttons.map((text, index) => (
+            <Button
+              key={index}
+              onClick={() => {
+                handleSendClick(text)
+              }}
+              className="mr-0.75 mb-0.75 w-fit normal-case"
+              small
+              tonal
+            >
+              {text}
+            </Button>
           ))}
         </div>
       </div>
