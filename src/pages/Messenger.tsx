@@ -9,11 +9,11 @@ const Messenger = () => {
     const [messageText, setMessageText] = useState('')
     const [messagesData, setMessagesData] = useState<MsgType[]>([
         new MsgType({
-            name: 'Центр-инвест',
+            name: 'Сервис доставки',
             from_id: 1,
             date: +Date.now(),
             text: 'Чем мы можем помочь?',
-            avatar: '/logo.jpg',
+            avatar: '/logo.png',
         })
     ])
 
