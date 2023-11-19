@@ -4,6 +4,7 @@ import MsgType from "../objects/MsgType"
 class Service {
     static cb
     static start_from = 0
+    static no_poll = false
     static req_id = parseInt(localStorage.getItem('request_id'))
 
     static async initHistory () {
@@ -23,6 +24,7 @@ class Service {
 
     static startPolling () {
         setInterval(async () => {
+            if (this.no_poll) return;
             const data = await API.getHistory(this.req_id, this.start_from)
             if (data.items.length > 0) {
                 this.handleMessages(data)
@@ -44,8 +46,10 @@ class Service {
             return this.createRequest(text)
         }
 
+        this.no_poll = true
         const data = await API.sendMessage(this.req_id, text)
         this.start_from = data.data
+        this.no_poll = false
     }
 }
 
