@@ -172,7 +172,7 @@ const Messenger = () => {
         onInput={(e) => setMessageText(e.target.value)}
         right={
           <Link
-            onClick={isClickable ? handleSendClick : undefined}
+            onClick={isClickable ? () => handleSendClick() : undefined}
             toolbar
             style={{
               opacity: inputOpacity,
