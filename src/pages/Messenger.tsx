@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {Icon, Link, Message, Messagebar, Messages, MessagesTitle, Navbar, Page} from 'konsta/react'
 import {MdSend} from 'react-icons/md'
 
+import Service from "../modules/msgservice"
 import MsgType from '../objects/MsgType'
 
 const Messenger = () => {
@@ -17,14 +18,14 @@ const Messenger = () => {
     ])
 
     const handleSendClick = () => {
-        messagesData.push(new MsgType({
-            from_id: 0,
-            date: +Date.now(),
-            text: messageText.trim()
-        }))
+        const text = messageText.trim()
+        pushMessages([new MsgType({
+            from_id: 0, text,
+            date: +Date.now()
+        })])
 
-        setMessagesData(messagesData)
         setMessageText('')
+        Service.sendMessage(text)
     }
 
     const inputOpacity = messageText ? 1 : 0.3
@@ -45,6 +46,17 @@ const Messenger = () => {
             }
             return part.value
         })
+
+    function pushMessages (messages: Array<MsgType>) {
+        const m = [...messagesData, ...messages]
+        setMessagesData(m)
+    }
+
+    Service.cb = pushMessages
+
+    useEffect(() => {
+        Service.initHistory()
+    }, [])
 
     return (
         <Page>
