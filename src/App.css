@@ -1,3 +1,7 @@
 #root > div > div > div:nth-child(4) > div > div.absolute.w-full.h-full.left-0.top-0.bg-white.dark\:bg-black.translucent {
     display: none;
 }
+
+#buttons .w-full {
+    width: unset;
+}
