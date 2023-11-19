@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Button, Icon, Link, Message as Msg, Messagebar, Messages, MessagesTitle, Navbar, Page } from 'konsta/react'
 import { MdSend } from 'react-icons/md'
+import { IoIosAdd } from "react-icons/io"
 
 import MessageService from '../modules/MessageService'
 import Message from '../objects/Message'
@@ -9,7 +10,7 @@ const Messenger = () => {
   const [messageText, setMessageText] = useState('')
   const [messagesData, setMessagesData] = useState<Message[]>([
     new Message({
-      name: 'Сервис доставки',
+      name: 'Маркетплейс',
       from_id: 1,
       date: +Date.now(),
       text: 'Чем мы можем помочь?',
@@ -20,7 +21,7 @@ const Messenger = () => {
   const ref = useRef<HTMLDivElement>(null)
   const barRef = useRef<HTMLDivElement>(null)
 
-  const [barHeight, setBarHeight] = useState(0);
+  const [barHeight, setBarHeight] = useState(0)
 
   const scrollToBottom = () => {
     ref.current?.scrollIntoView()
@@ -91,7 +92,7 @@ const Messenger = () => {
   useLayoutEffect(() => {
     function updateSize() {
       const height = barRef.current?.offsetHeight
-      if (!height) return;
+      if (!height) return
       setBarHeight(height)
     }
 
@@ -100,11 +101,26 @@ const Messenger = () => {
     return () => {
       window.removeEventListener('resize', updateSize)
     }
-  }, []);
+  }, [])
 
   return (
     <Page>
-      <Navbar title="Поддержка"/>
+      <Navbar
+        title="Поддержка"
+        right={
+          <Link onClick={() => {
+            localStorage.removeItem('request_id')
+            window.location.reload()
+          }} navbar>
+            <Icon
+              ios={<IoIosAdd className="w-9 h-9"/>}
+              material={
+                <IoIosAdd className="w-6 h-6 fill-black dark:fill-md-dark-on-surface"/>
+              }
+            />
+          </Link>
+        }
+      />
       <Messages style={{marginBottom: barHeight + 'px'}}>
         <MessagesTitle style={{marginBottom: '0.625rem'}}>{currentDate}</MessagesTitle>
         {messagesData.map((message, index) => (
@@ -132,7 +148,7 @@ const Messenger = () => {
         <div ref={ref}/>
       </Messages>
       <div ref={barRef} className="fixed pt-1 bottom-0 start-0 pb-11 w-full bg-white dark:bg-black translucent">
-        <div className="w-full max-w-[80%] flex flex-wrap ml-2">
+        <div className="max-w-[80%] flex flex-wrap ml-2">
           {['Сделать заказ', 'Отследить заказ', 'Отменить заказ',
             'Возврат средств', 'Оставить отзыв', 'Жалоба'].map((text, index) => (
               <Button
