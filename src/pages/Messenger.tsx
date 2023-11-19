@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Icon, Link, Message as Msg, Messagebar, Messages, MessagesTitle, Navbar, Page } from 'konsta/react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { Button, Icon, Link, Message as Msg, Messagebar, Messages, MessagesTitle, Navbar, Page } from 'konsta/react'
 import { MdSend } from 'react-icons/md'
 
 import MessageService from '../modules/MessageService'
@@ -18,6 +18,9 @@ const Messenger = () => {
   ])
 
   const ref = useRef<HTMLDivElement>(null)
+  const barRef = useRef<HTMLDivElement>(null)
+
+  const [barHeight, setBarHeight] = useState(0);
 
   const scrollToBottom = () => {
     ref.current?.scrollIntoView()
@@ -27,8 +30,12 @@ const Messenger = () => {
     scrollToBottom()
   }, [messagesData])
 
-  const handleSendClick = () => {
-    const text = messageText.trim()
+  const handleSendClick = (text?: string) => {
+    if (text) {
+      text = text.trim()
+    } else {
+      text = messageText.trim()
+    }
     pushMessages([new Message({
       from_id: 0, text,
       date: +Date.now()
@@ -75,16 +82,30 @@ const Messenger = () => {
         if (isClickable) handleSendClick()
       }
     }
-    document.addEventListener("keydown", listener)
+    document.addEventListener('keydown', listener)
     return () => {
-      document.removeEventListener("keydown", listener)
+      document.removeEventListener('keydown', listener)
     }
   }, [isClickable, messageText])
+
+  useLayoutEffect(() => {
+    function updateSize() {
+      const height = barRef.current?.offsetHeight
+      if (!height) return;
+      setBarHeight(height)
+    }
+
+    window.addEventListener('resize', updateSize)
+    updateSize()
+    return () => {
+      window.removeEventListener('resize', updateSize)
+    }
+  }, []);
 
   return (
     <Page>
       <Navbar title="Поддержка"/>
-      <Messages>
+      <Messages style={{marginBottom: barHeight + 'px'}}>
         <MessagesTitle style={{marginBottom: '0.625rem'}}>{currentDate}</MessagesTitle>
         {messagesData.map((message, index) => (
           message.type === 'system'
@@ -105,12 +126,31 @@ const Messenger = () => {
                   />
                 )
               }
-              className="whitespace-pre-line"
+              className="whitespace-pre-line break-all"
             />
         ))}
         <div ref={ref}/>
       </Messages>
+      <div ref={barRef} className="fixed pt-1 bottom-0 start-0 pb-11 w-full bg-white dark:bg-black translucent">
+        <div className="w-full max-w-[80%] flex flex-wrap ml-2">
+          {['Сделать заказ', 'Отследить заказ', 'Отменить заказ',
+            'Возврат средств', 'Оставить отзыв', 'Жалоба'].map((text, index) => (
+              <Button
+                key={index}
+                onClick={() => {
+                  handleSendClick(text)
+                }}
+                className="mr-0.75 mb-0.75 w-fit normal-case"
+                small
+                tonal
+              >
+                {text}
+              </Button>
+          ))}
+        </div>
+      </div>
       <Messagebar
+        className="bg-white dark:bg-black translucent"
         placeholder="Напишите сообщение..."
         value={messageText}
         onInput={(e) => setMessageText(e.target.value)}
