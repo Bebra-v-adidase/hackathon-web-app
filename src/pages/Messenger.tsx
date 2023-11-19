@@ -156,7 +156,7 @@ const Messenger = () => {
         ))}
         <div ref={ref}/>
       </Messages>
-      <div ref={barRef} className="fixed pt-1 bottom-0 start-0 pb-11 bg-white dark:bg-black translucent" id='buttons'>
+      <div ref={barRef} className="fixed w-full pt-1 bottom-0 start-0 pb-11 bg-white dark:bg-black translucent" id='buttons'>
         <div className="max-w-[80%] flex flex-wrap ml-2">
           {buttons.map((text, index) => (
             <Button
